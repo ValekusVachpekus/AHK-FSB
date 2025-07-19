@@ -427,6 +427,7 @@ showHotkeys() {
     addChatMessageEx(0xFFFFFF, "{94f8ff} Numpad2 {176114}> {ffffff} Пробить местоположение по {94f8ff}ID{ffffff}")
     addChatMessageEx(0xFFFFFF, "{94f8ff} ALT + Numpad3 {176114}> {ffffff} Ввести текст команды")
     addChatMessageEx(0xFFFFFF, "{94f8ff} Numpad3 {176114}> {ffffff} Отправить команду")
+    addChatMessageEx(0xFFFFFF, "{94f8ff} Numpad4 {176114}> {ffffff} Оплатить все {94f8ff}штрафы{ffffff} (Госуслуги)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !X {176114}> {ffffff} Открыть быстрое меню помощи")
     addChatMessageEx(0xFFFFFF, "                   ")
     Sleep, 100
