@@ -1,178 +1,168 @@
-﻿#include UDF.ahk
+#Include UDF.ahk
 #Include helperFSB_test.ahk
-#CommentFlag
 
-// way - путь до папки игры\amazing\chatlog.txt
-// CRMP_USER_NICKNAME - Ваш никнейм
-// poz - Ваш позывной
-// Ниже можете ввести свою маску и должность, все отмечено комментариями
-// По желанию можете поменять бинды клавиш: ! - LAlt, ^-Ctrl
+ActiveID := 0
+way := "C:\Amazing Games\Amazing Online\PC\amazing\chatlog.txt"
+global CRMP_USER_NICKNAME := "Vladislav_Shetkov"
+global poz := "Фантом"
+global chatFile := ""
+global chatPos := 0
+global activeEvent := ""
+global cufffl := false
+global UserID := 0
 
-ActiveID = 0
-way = C:\Users\ilusha\Desktop\PC\amazing\chatlog.txt
-// way = C:\Amazing Games\Amazing Online\PC\amazing\chatlog.txt
-global CRMP_USER_NICKNAME:="Vladislav_Shetkov"
-global poz:="Фантом"
-global strings=1
-
-
-
-global cufffl
-
-
-Sleep 5000
-
-cufffl := False
-
+#Persistent
+SetTimer, ChatWatcher, 500
+Sleep, 5000
 loadInGame()
-FileDelete, %way%
-Goto, start
+Return
 
-// Цикл
-start:
-FileReadLine, line, %way%, strings
-{
-    if ErrorLevel
-    {
-        goto start
+ChatWatcher:
+    if (!IsObject(chatFile)) {
+        chatFile := FileOpen(way, "r-d")
+        if (!IsObject(chatFile)) {
+            FileAppend,, %way%
+            chatFile := FileOpen(way, "r-d")
+        }
+        chatFile.Seek(0, 2)
+        chatPos := chatFile.Pos
+        return
     }
-    else
-    {
-
-        // Пробив ООП id
-        if line contains %CRMP_USER_NICKNAME%
+    
+    currentSize := chatFile.Length
+    if (currentSize < chatPos) {
+        chatFile.Close()
+        chatFile := FileOpen(way, "r-d")
+        chatPos := 0
+    }
+    
+    if (currentSize > chatPos) {
+        chatFile.Seek(chatPos)
+        newData := chatFile.Read()
+        chatPos := chatFile.Pos
+        
+        Loop, Parse, newData, `n, `r
         {
-            If(InStr(line, "местоположение"))
-            {
-                RegExMatch(line, "запросил местоположение (\w+_\w+) \[(\d+)\]\", zapros)
-                RegExMatch(line, "\[(\d+)\]", zapros)
-                sendChat("/id " zapros1)
+            line := Trim(A_LoopField)
+            if (line != "") {
+                ProcessChatLine(line)
             }
         }
+    }
+return
 
+ProcessChatLine(line) {
 
-        // Тазер и дубинка
-        if line contains Вы оглушили
-        {
-            if (InStr(line, "с помощью дубинки") or InStr(line, "с помощью электрошокера"))
-            {
-                if (InStr(line, "Неизвестный ["))
-                {
-                    RegExMatch(line, "Вы оглушили Неизвестный \[(.*)\] с помощью", pmask)
-                    saveMasktwo(pmask1)
-                }
-                else {
-                    RegExMatch(line, "Вы оглушили (.*) с помощью", name)
-                    sendChat("/id " name1)
-                }
-            }
-        }
-
-
-        // Сигналка
-        if line contains [R] Внимание всем постам
-        {
-            If(InStr(line, "Сработала сигнализация дома"))
-            {
-                RegExMatch(line, "Сработала сигнализация дома (.*), возможно", pid)
-                RegHomeId := pid1
-                addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> {ffffff}Нажмите {94f8ff}Y{FFFFFF} если вы хотите отметить дом {94f8ff}" RegHomeId ".")
-                ograb(RegHomeId)
-                
-            }
-        }
-
-
-
-        // Употребление id
-        if line contains употребил(-а)
-        {
-            if (InStr(line, "мятную пудру") or InStr(line, "зеленый чай"))
-            {
-                if (InStr(line, "Неизвестный ["))
-                {
-                    RegExMatch(line, "Неизвестный \[(\d+)\] употребил(-а)", pmmask)
-                    RegExMatch(line, "\[(\d+)\]", pmmask)
-                    addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> {ffffff}Рядом с вами употребили наркотики, нажмите {94f8ff}Y{FFFFFF}, чтобы записать маску игрока")
-                    narkosham(pmmask1)
-                }
-                else {
-                    RegExMatch(line, "(\w+_\w+) употребил(-а)", narko)
-                    RegExMatch(line, "(\w+_\w+)", narko)
-                    addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> {ffffff}Рядом с вами употребили наркотики, нажмите {94f8ff}Y{FFFFFF}, чтобы записать ID игрока")
-                    narkosha(narko1)
-                }
-            }
-        }
-
-
-        // Преследка id
-        if InStr(line, CRMP_USER_NICKNAME)
-        {
-        if InStr(line, "преследование")
-            {
-                if RegExMatch(line, "\[(\d+)\] начал преследование за (\w+_\w+) \[(\d+)\]", presled)
-                {
-                    sendchat("/id " presled3)
-                }
-            }
-        }
-
-        // id из ника
-        if line contains Игроки онлайн:
-        {
-            str := strings+=2
-            sleep 25
-            FileReadLine, nick, %way%, %str%
-            if(InStr(nick, "Совпадений не найдено")) {
+    if InStr(line, CRMP_USER_NICKNAME) && InStr(line, "местоположение") {
+        RegExMatch(line, "запросил местоположение (\w+_\w+) \[(\d+)\]\", zapros)
+        sendChat("/id " zapros2)
+    }
+    
+    if InStr(line, "Вы оглушили") {
+        if (InStr(line, "дубинки") || InStr(line, "электрошокера")) {
+            if InStr(line, "Неизвестный [") {
+                RegExMatch(line, "Вы оглушили Неизвестный \[(\d+)\]", pmask)
+                activeEvent := "saveMask"
+                addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Нажмите Y чтобы записать маску " pmask1)
             } else {
-                RegExMatch(nick, "\}\[(.*)\]", pid)
-                UserID := pid1
-                addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}>  {94f8ff}ID {ffffff}подозреваемого был обновлен на {94f8ff}"UserID)
+                RegExMatch(line, "Вы оглушили (\w+_\w+)", name)
+                sendChat("/id " name1)
             }
         }
-
-
-        // Кафф после ПДП
-        if line contains Вы начали
-        {
-            If(InStr(line, "спасать игрока"))
-            {
-                if (InStr(line, "Неизвестный ["))
-                {
-                    RegExMatch(line, "Вы начали спасать игрока Неизвестный \[(.*)\]", pmaskk)
-                }
-                else {
-                    RegExMatch(line, "Вы начали спасать игрока (\w+_\w+)!", acuff)
-                    RegExMatch(line, "(\w+_\w+)", acuff)
-                    autocuff(acuff)
-
-                }
-            }
+    }
+    
+    if InStr(line, "Сработала сигнализация дома") {
+        RegExMatch(line, "Сработала сигнализация дома (\d+)", pid)
+        activeEvent := "signal"
+        addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Нажмите Y чтобы отметить дом " pid1)
+    }
+    
+    if InStr(line, "употребил(-а)") && (InStr(line, "пудру") || InStr(line, "чай")) {
+        if InStr(line, "Неизвестный [") {
+            RegExMatch(line, "Неизвестный \[(\d+)\] употребил", pmmask)
+            activeEvent := "narkoMask"
+            addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Рядом употребили наркотики! Нажмите Y для маски " pmmask1)
+        } else {
+            RegExMatch(line, "(\w+_\w+) употребил", narko)
+            activeEvent := "narkoID"
+            addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Рядом употребили наркотики! Нажмите Y для ID " narko1)
         }
-        if line contains Вы
-        {
-            If(InStr(line, "спасли"))
-            {
-                if (cufffl){
-                    RegExMatch(line, "Вы спасли (\w+_\w+)!", acuff)
-                    RegExMatch(line, "(\w+_\w+)", acuff)
-                    SendChat("/cuff " + UserID)
-                    Sleep 500
-                    SendChat("/frac " + UserID)
-                    Sleep 300
-                    SendInput {sc2}{sc2}
-                    Sleep 200  
-                    SendInput {sc5}{sc5}
-                }
-                
-            }
+    }
+    
+    if InStr(line, "Вы начали спасать игрока") {
+        if InStr(line, "Неизвестный [") {
+            RegExMatch(line, "Вы начали спасать игрока Неизвестный \[(\d+)\]", pmaskk)
+            activeEvent := "saveUnknown"
+            addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Спасаете игрока! Нажмите Y для наручников")
+        } else {
+            RegExMatch(line, "Вы начали спасать игрока (\w+_\w+)", acuff)
+            activeEvent := "saveKnown"
+            addChatMessageEx(-1, "{94f8ff} AHK_FSB {155912}> Спасаете " acuff1 "! Нажмите Y для наручников")
         }
-
-        strings+=1
-        goto start
+    }
+    
+    if InStr(line, "Вы спасли") {
+        if (cufffl) {
+            RegExMatch(line, "Вы спасли (\w+_\w+)", acuff)
+            SendChat("/cuff " UserID)
+            Sleep 500
+            SendChat("/frac " UserID)
+            Sleep 300
+            SendInput {sc2}{sc2}
+            Sleep 200  
+            SendInput {sc5}{sc5}
+            cufffl := false
+        }
+    }
+    
+    if InStr(line, CRMP_USER_NICKNAME) && InStr(line, "преследование") {
+        RegExMatch(line, "\[(\d+)\] начал преследование за (\w+_\w+) \[(\d+)\]", presled)
+        sendchat("/id " presled3)
+    }
+    
+    if InStr(line, "Игроки онлайн:") {
+        RegExMatch(line, "\}\[(.*)\]", pid)
+        UserID := pid1
+        addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> ID обновлен: " UserID)
     }
 }
+
+~Y::
+    if (activeEvent = "signal") {
+        sendChat("/gps")
+        Sleep 300
+        SendInput, {Down 15}{Enter}
+        Sleep 300
+        SendInput %RegHomeId%{Enter}
+        activeEvent := ""
+    }
+    else if (activeEvent = "narkoMask") {
+        saveMask(pmmask1)
+        activeEvent := ""
+    }
+    else if (activeEvent = "narkoID") {
+        sendChat("/id " narko1)
+        activeEvent := ""
+    }
+    else if (activeEvent = "saveUnknown" || activeEvent = "saveKnown") {
+        cufffl := true
+        sendchat("/id " pmaskk1)
+        activeEvent := ""
+    }
+    else if (activeEvent = "saveMask") {
+        saveMask(pmask1)
+        activeEvent := ""
+    }
+return
+
+~N::
+    if (activeEvent != "") {
+        addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> Действие отменено")
+        activeEvent := ""
+    }
+return
+
+
 
 // Вбив id
 !1::
@@ -242,19 +232,6 @@ Return
 // Отправка своей команды
 Numpad3::
 SendChat(Vnedrenie)
-Return
-
-// Штрафы
-Numpad4::
-SendChat("/call")
-Sleep 70
-SendInput, {Down 10}
-Sleep 70
-SendInput, {Enter}
-Sleep 50
-SendInput, {Enter}
-Sleep 50
-SendInput, {Enter}
 Return
 
 // Представление
@@ -1055,9 +1032,7 @@ addChatMessageEx(0, "{0082D1} AHK_FSB {155912}>{FFFFFF} Чтобы увидет�
 addChatMessageEx(0, "{D1000C} AHK_FSB {155912}>{FFFFFF} Автор AHK - {94f8ff}Vladislav_Shetkov{FFFFFF}/{94f8ff}Vladislav_Valekus{FFFFFF}/{94f8ff}Glad_Valekus")
 addChatMessageEx(0, "          ")
 }
-LABEL_EXIT:
-ExitApp
-Return
+
 saveID(fplayerID) {
 RegplayerId := fplayerID
 if (UserID != fplayerID) {
@@ -1139,43 +1114,6 @@ Prest(pmaskk) {
     Return
 }
 
-autocuff(acuff){
-    cufffl := False
-    addChatMessageEx(-1, "{94f8ff} AHK_FSB {176114}>{FFFFFF} Вы спасаете игрока {94f8ff}" acuff "{FFFFFF}. Нажмите клавишу {94f8ff}Y{FFFFFF}, чтобы надеть на него наручники после спасения")
-    addChatMessageEx(-1, "{94f8ff} AHK_FSB {176114}>{FFFFFF} Нажмите клавишу {ff2428}N{FFFFFF}, чтобы отклонить предложение")
-    startTime := A_TickCount
-    endTime := startTime + 15000
-    while A_TickCount < endTime {
-        if GetKeyState("Y", "P") {
-            cufffl := True
-            sendchat("/id " acuff)
-            Return
-        } else if GetKeyState("N", "P") {
-            cufffl := False
-            addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {176114}>{FFFFFF} Отклонено!")
-            Return
-        }
-    }
-    addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {176114}>{FFFFFF} Время принятия истекло")
-    Return
-}
-
-ograb(ograba) {
-    startTime := A_TickCount
-    endTime := startTime + 10000
-    while A_TickCount < endTime
-    if GetKeyState("Y", "P")
-    {
-        sleep 100
-        sendChat("/gps")
-        sleep 200
-        SendInput, {Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{Down}{enter}
-        sleep 200
-        SendInput,%ograba%{Enter}
-        Return
-    }
-}
-
 narkosha(narik) {
     narko = narik
     startTime := A_TickCount
@@ -1238,9 +1176,13 @@ help1()
 Return
 
 
-// Перезагрузка
-!Numpad0::
-sleep 50
-addChatMessageEx(0xFFFFFF, "{94f8ff} AHK_FSB {155912}> {ffffff}Перезагрузка AHK")
-reload
+
+
+LABEL_EXIT:
+    if (IsObject(chatFile)) {
+        chatFile.Close()
+    }
+    ExitApp
 return
+
+!Numpad0::reload 
