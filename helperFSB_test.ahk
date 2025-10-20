@@ -413,7 +413,6 @@ help1() {
 showHotkeys() {
     addChatMessageEx(0xFFFFFF, "                   ")
     addChatMessageEx(0xFFFFFF, "{94f8ff} AHK_FSB {176114}> {ffffff} Ниже перечислены все {94f8ff}горячие клавиши")
-    addChatMessageEx(0xFFFFFF, "{94f8ff} ALT + F1 {176114}> {ffffff} Открыть {94f8ff}настройки{ffffff}  скрипта")
     addChatMessageEx(0xFFFFFF, "{94f8ff} ALT + 1 {176114}> {ffffff} Ввести {94f8ff}ID{ffffff}  подозреваемого")
     addChatMessageEx(0xFFFFFF, "{94f8ff} ALT + 2 {176114}> {ffffff} Представиться")
     addChatMessageEx(0xFFFFFF, "{94f8ff} ALT + 3 {176114}> {ffffff} Начать преследование за {94f8ff}подозреваемым{ffffff}")
