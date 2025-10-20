@@ -491,6 +491,7 @@ Sleep, 500
 SendChat("/do Дежурный вышел, после чего забрал задержанного и посадил в КПЗ.")
 Return
 
+
 :?:!ш::
 SendInput, {Enter}
 SendChat("/frac " + UserID)
