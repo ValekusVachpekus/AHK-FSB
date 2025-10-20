@@ -512,6 +512,46 @@ addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> {ffffff} 30 секунд 
 Return
 
 
+// Уголовный штраф
+:?:!шук::
+SendInput, {F6}
+Sleep 100
+SendInput, /Введите сумму штрафа:{space}
+Sleep 50
+// Ввод суммы штрафа 
+SendInput, {F6}
+Sleep 100
+SendInput, /Введите номер статьи (ст. <Номер> УК):{space}
+Sleep 50
+// Ввод статьи (Число)
+SendChat("/me начал выписывать уголовный штраф")
+Sleep, 300
+SendInput, {Enter}
+// Начало цикла. Количество повторений = Сумма штрафа, введенная пользователем/50000
+SendChat("/frac " + UserID)
+Sleep 300
+SendInput {sc2}{sc2}
+Sleep 200  
+SendInput {sc7}{sc7}
+Sleep 200  
+SendInput {sc2}{sc2}
+Sleep 200  
+SendInput {Down}
+Sleep 200  
+SendInput {Enter}
+Sleep 200  
+// Вставка числа 50000 в окно
+SendInput {Down}
+Sleep 200  
+// Вставка статьи по формату ст. <Число, введенное пользователем> 
+SendInput {Enter}
+Sleep 200
+addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> {ffffff} Процесс выписывания штрафа {94f8ff}(<Сколько уже выписано>/<Сколько введено пользователем>)")
+sleep 30000
+// Конец цикла
+Return
+
+
 :?:!су::
 SendMessage, 0x50,, 0x4190419,, A
 SendInput, {Enter}
