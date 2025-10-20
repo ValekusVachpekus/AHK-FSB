@@ -20,7 +20,7 @@ global strings=1
 global cufffl
 
 
-Sleep 5000
+Sleep 1000
 
 cufffl := False
 
