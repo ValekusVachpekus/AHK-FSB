@@ -444,6 +444,7 @@ showOtigrovki() {
     addChatMessageEx(0xFFFFFF, "{94f8ff} !п {176114}> {ffffff} Внедрение + отыгровка")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !ар {176114}> {ffffff} Передать задержанного дежурному")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !ш {176114}> {ffffff} Выписать штраф {94f8ff}(КД 30 сек)")
+    addChatMessageEx(0xFFFFFF, "{94f8ff} !шук {176114}> {ffffff} Выписать уголовный штраф {94f8ff}(Автоматически)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !су {176114}> {ffffff} Выдать розыск {94f8ff}(КД 20 сек)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !выг {176114}> {ffffff} Выдать выговор/увал {94f8ff}(Отыгровка)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !упр {176114}> {ffffff} Проверка металлоискателем {94f8ff}(Отыгровка)")

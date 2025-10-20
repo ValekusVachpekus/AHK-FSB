@@ -477,6 +477,69 @@ addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> {ffffff} 30 секунд 
 Return
 
 
+// Уголовные штрафы
+:?:!шук::
+SendMessage, 0x50,, 0x4190419,, A
+SendInput, /Введите сумму штрафа:{space}
+Sleep 50
+Input, fine_amount, I L10 V, {Enter}
+
+SendInput, {F6}
+Sleep 100
+SendInput, /Введите номер статьи (ст. <Номер> УК):{space}
+Sleep 50
+Input, article_number, I L5 V, {Enter}
+Sleep, 200
+repetitions := Ceil(fine_amount / 50000)
+
+SendInput, {Enter}
+Sleep, 300
+
+Loop, %repetitions%
+{
+    SendChat("/frac " + UserID)
+    Sleep 300
+    SendInput {sc2}{sc2}
+    Sleep 200  
+    SendInput {sc7}{sc7}
+    Sleep 200  
+    SendInput {sc2}{sc2}
+    Sleep 200  
+    SendInput {Down}
+    Sleep 200  
+    SendInput {Enter}
+    Sleep 200  
+    
+    SendInput, 50000
+    Sleep 200
+    SendInput {Tab}
+    Sleep 200  
+    
+    SendInput, ст. %article_number% УК
+    Sleep 200
+    SendInput {Enter}
+    Sleep 200
+    
+    current_progress := A_Index * 50000
+    if (current_progress > fine_amount)
+        current_progress := fine_amount
+    
+    addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> {ffffff} Процесс выписывания штрафа {94f8ff}(" current_progress "/" fine_amount ")")
+    
+    if (A_Index < repetitions)
+        Sleep, 30000
+}
+
+addChatMessageEx(0x4169E1, "{94f8ff} AHK_FSB {155912}> {ffffff} Штраф на сумму {94f8ff}" fine_amount " руб.{ffffff} по {94f8ff}ст. " article_number " УК{ffffff} выписан полностью!")
+
+fine_amount := ""
+article_number := ""
+repetitions := ""
+current_progress := ""
+Return
+
+
+
 :?:!су::
 SendMessage, 0x50,, 0x4190419,, A
 SendInput, {Enter}
