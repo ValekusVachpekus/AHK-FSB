@@ -1,7 +1,15 @@
 ﻿#include UDF.ahk
 #Include helperFSB_test.ahk
+#Include SettingsUI.ahk
 #CommentFlag
 
+
+// Инициализация глобальных переменных через LoadSettings
+global CRMP_USER_NICKNAME, poz, way, Zheton
+LoadSettings()
+
+
+// Уже не используем такие обьявления т.к. настройка теперь работает через файл SettingsUI.ahk
 // way - путь до папки игры\amazing\chatlog.txt
 // CRMP_USER_NICKNAME - Ваш никнейм
 // poz - Ваш позывной
@@ -9,12 +17,7 @@
 // По желанию можете поменять бинды клавиш: ! - LAlt, ^-Ctrl
 
 ActiveID = 0
-way = C:\Users\ilusha\Desktop\PC\amazing\chatlog.txt
-// way = C:\Amazing Games\Amazing Online\PC\amazing\chatlog.txt
-global CRMP_USER_NICKNAME:="Vladislav_Shetkov"
-global poz:="Фантом"
 global strings=1
-
 
 
 global cufffl
@@ -472,7 +475,7 @@ Return
 // Тут свою маску впишите
 :?:!уд::
 SendInput, {Enter}
-SendChat("/do Номер жетона сотрудника Т-УФСБ: «271-832».")
+SendChat("/do Номер жетона сотрудника Т-УФСБ: «" Zheton "».")
 Return
 
 :?:!м::
@@ -1071,7 +1074,8 @@ if (!checkHandles())
 checkHandles()
 Sleep 1500
 addChatMessageEx(0, "          ")
-addChatMessageEx(0, "{FFFFFF} AHK_FSB {155912}>{FFFFFF} Приветствуем, {94f8ff}" . CRMP_USER_NICKNAME)
+addChatMessageEx(0, "{FFFFFF} AHK_FSB {155912}>{FFFFFF} Приветствуем, {94f8ff}" CRMP_USER_NICKNAME "! {FFFFFF}Ваш позывной {94f8ff}" poz)
+addChatMessageEx(0, "{0082D1} AHK_FSB {155912}>{FFFFFF} Если данные неверные - откройте настройку через {94f8ff}Alt+F1")
 addChatMessageEx(0, "{0082D1} AHK_FSB {155912}>{FFFFFF} Чтобы увидеть подсказку введите {94f8ff} !помощь")
 addChatMessageEx(0, "{D1000C} AHK_FSB {155912}>{FFFFFF} Автор AHK - {94f8ff}Vladislav_Shetkov{FFFFFF}/{94f8ff}Vladislav_Valekus{FFFFFF}/{94f8ff}Glad_Valekus")
 addChatMessageEx(0, "          ")
