@@ -201,6 +201,7 @@ GUI, ADD, TEXT,,       Numpad2                пробив по ID
 GUI, ADD, TEXT,,       !деп            	   Депортамент
 GUI, ADD, TEXT,,       !су                            Выдать розыск
 GUI, ADD, TEXT,,       !ш                             Штраф
+GUI, ADD, TEXT,,       !шук                           Уголовный штраф
 GUI, ADD, TEXT,,       !м                             Надеть и сбить маску
 GUI, ADD, TEXT,,       !визитка(дс/вк)      Визитка discord/VK соответственно
 GUI, ADD, TEXT,,       !ву                            Внутренний устав полиции вкл/выкл
@@ -443,6 +444,7 @@ showOtigrovki() {
     addChatMessageEx(0xFFFFFF, "{94f8ff} !м {176114}> {ffffff} Надеть маску + сбросить")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !ар {176114}> {ffffff} Передать задержанного дежурному")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !ш {176114}> {ffffff} Выписать штраф {94f8ff}(КД 30 сек)")
+    addChatMessageEx(0xFFFFFF, "{94f8ff} !шук {176114}> {ffffff} Выписать уголовный штраф {94f8ff}(Автоматически по сумме штрафа)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !су {176114}> {ffffff} Выдать розыск {94f8ff}(КД 20 сек)")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !пр {176114}> {ffffff} Заполнить протокол задержания")
     addChatMessageEx(0xFFFFFF, "{94f8ff} !визиткадс {176114}> {ffffff} Дать визитку {94f8ff}(Discord)")
